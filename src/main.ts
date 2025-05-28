@@ -1,6 +1,6 @@
 // 修正导入方式
 import { app, event } from '@tauri-apps/api';
-// import { checkUpdate, downloadUpdate, installUpdate } from '@tauri-apps/api/updater';
+import { checkUpdate, downloadUpdate, installUpdate } from '@tauri-apps/plugin-updater';
 
 // DOM 元素类型定义
 const currentVersionEl = document.getElementById('current-version') as HTMLSpanElement;
@@ -8,7 +8,7 @@ const checkUpdateBtn = document.getElementById('check-update-btn') as HTMLButton
 const downloadUpdateBtn = document.getElementById('download-update-btn') as HTMLButtonElement;
 const installUpdateBtn = document.getElementById('install-update-btn') as HTMLButtonElement;
 const updateStatusEl = document.getElementById('update-status') as HTMLDivElement;
-// const updateLogEl = document.getElementById('update-log') as HTMLDivElement;
+const updateLogEl = document.getElementById('update-log') as HTMLDivElement;
 
 // 状态类型
 type StatusType = 'info' | 'success' | 'error' | 'warning' | 'loading';
@@ -88,31 +88,31 @@ async function checkForUpdates(): Promise<void> {
 
     showStatus('应用已是最新版本', 'success');
 
-    // // 使用新的导入方式调用更新检查
-    // const update = await checkUpdate();
-    //
-    // if (update.status === 'UPTODATE') {
-    //   showStatus('应用已是最新版本', 'success');
-    //   updateLogEl.innerHTML = '<p class="italic text-gray-400">暂无更新日志</p>';
-    //   downloadUpdateBtn.classList.add('hidden');
-    //   installUpdateBtn.classList.add('hidden');
-    // } else if (update.status === 'AVAILABLE') {
-    //   showStatus(`发现新版本 ${update.manifest?.version}`, 'warning');
-    //
-    //   // 显示更新日志
-    //   if (update.manifest?.body) {
-    //     updateLogEl.innerHTML = `<pre class="whitespace-pre-wrap">${update.manifest.body}</pre>`;
-    //   } else {
-    //     updateLogEl.innerHTML = '<p class="text-gray-600">无更新说明</p>';
-    //   }
-    //
-    //   // 显示下载按钮
-    //   downloadUpdateBtn.classList.remove('hidden');
-    //   installUpdateBtn.classList.add('hidden');
-    // } else {
-    //   showStatus('更新状态未知', 'error');
-    //   console.error('未知更新状态:', update.status);
-    // }
+    // 使用新的导入方式调用更新检查
+    const update = await checkUpdate();
+
+    if (update.status === 'UPTODATE') {
+      showStatus('应用已是最新版本', 'success');
+      updateLogEl.innerHTML = '<p class="italic text-gray-400">暂无更新日志</p>';
+      downloadUpdateBtn.classList.add('hidden');
+      installUpdateBtn.classList.add('hidden');
+    } else if (update.status === 'AVAILABLE') {
+      showStatus(`发现新版本 ${update.manifest?.version}`, 'warning');
+
+      // 显示更新日志
+      if (update.manifest?.body) {
+        updateLogEl.innerHTML = `<pre class="whitespace-pre-wrap">${update.manifest.body}</pre>`;
+      } else {
+        updateLogEl.innerHTML = '<p class="text-gray-600">无更新说明</p>';
+      }
+
+      // 显示下载按钮
+      downloadUpdateBtn.classList.remove('hidden');
+      installUpdateBtn.classList.add('hidden');
+    } else {
+      showStatus('更新状态未知', 'error');
+      console.error('未知更新状态:', update.status);
+    }
   } catch (error) {
     showStatus('检查更新失败', 'error');
     console.error('检查更新失败:', error);
