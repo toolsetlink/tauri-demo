@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tauri 应用更新验证</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script type="module" src="/src/main.ts" defer></script>
+
+    <!-- 配置 Tailwind CSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e40af',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        dark: '#1f2937',
+                        light: '#f3f4f6'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-custom {
+                transition: all 0.3s ease-in-out;
+            }
+            .shadow-custom {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter text-dark min-h-screen flex flex-col">
+<!-- 导航栏 -->
+<header class="bg-white shadow-sm sticky top-0 z-10">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <i class="fa fa-rocket text-primary text-2xl"></i>
+            <h1 class="text-xl font-bold text-dark">Tauri 更新验证</h1>
+        </div>
+        <div id="version-container" class="bg-gray-100 rounded-full px-4 py-1 text-sm font-medium text-gray-600">
+            版本: <span id="current-version">加载中...</span>
+        </div>
+    </div>
+</header>
+
+<!-- 主内容区 -->
+<main class="flex-grow container mx-auto px-4 py-8 max-w-4xl">
+    <div class="bg-white rounded-xl shadow-custom p-8 mb-8 transform hover:scale-[1.01] transition-custom">
+        <h2 class="text-2xl font-bold mb-4 text-center">应用更新验证</h2>
+        <p class="text-gray-600 mb-6 text-center">此页面用于测试 Tauri 应用的更新功能，展示当前版本并提供更新检查。</p>
+
+        <div class="flex flex-col items-center space-y-6">
+            <!-- 状态显示区 -->
+            <div id="update-status" class="w-full bg-gray-50 rounded-lg p-6 text-center min-h-[120px] flex items-center justify-center">
+                <p class="text-gray-500">点击下方按钮检查更新</p>
+            </div>
+
+            <!-- 检查更新按钮 -->
+            <button id="check-update-btn" class="bg-primary hover:bg-secondary text-white font-medium py-3 px-8 rounded-lg transition-custom flex items-center space-x-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                <i class="fa fa-refresh"></i>
+                <span>检查更新</span>
+            </button>
+
+            <!-- 更新按钮 (初始隐藏) -->
+            <button id="download-update-btn" class="hidden bg-success hover:bg-green-600 text-white font-medium py-3 px-8 rounded-lg transition-custom flex items-center space-x-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                <i class="fa fa-download"></i>
+                <span>下载更新</span>
+            </button>
+
+            <!-- 安装按钮 (初始隐藏) -->
+            <button id="install-update-btn" class="hidden bg-warning hover:bg-amber-600 text-white font-medium py-3 px-8 rounded-lg transition-custom flex items-center space-x-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                <i class="fa fa-cog"></i>
+                <span>安装更新</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 更新日志区 -->
+    <div class="bg-white rounded-xl shadow-custom p-6 mb-8">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+            <i class="fa fa-history text-primary mr-2"></i>更新日志
+        </h3>
+        <div id="update-log" class="bg-gray-50 rounded-lg p-4 h-64 overflow-y-auto text-sm text-gray-600">
+            <p class="italic text-gray-400">暂无更新日志</p>
+        </div>
+    </div>
+</main>
+
+<!-- 页脚 -->
+<footer class="bg-dark text-white py-6">
+    <div class="container mx-auto px-4 text-center">
+        <p>Tauri 更新验证应用 &copy; 2025</p>
+        <p class="text-gray-400 text-sm mt-2">此应用仅用于演示 Tauri 更新功能</p>
+    </div>
+</footer>
+
+
+</body>
+</html>
