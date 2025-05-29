@@ -36,10 +36,14 @@
   },
   "plugins": {
     "updater": {
+      "dangerousInsecureTransportProtocol": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IHJzaWduIGVuY3J5cHRlZCBzZWNyZXQga2V5ClJXUlRZMEl5dUg0dmxVZVFKb2hjS21landxTVdMWlVaQ3Eya0V0VHFvbHpaTlZGNjVpc0FBQkFBQUFBQUFBQUFBQUlBQUFBQWhJTmEzV2NTREt4L2wwb1Z4S21ZRUFxcUtheWJHR0xCQTFoaDlqRVlBaCt4V3ExajcrblNoMWlHMVFnbno2eGlRSEZjYy8zMytZK2V0Y0l0enpJRWJ1YXJPQlFkN08zNExzYlJsWDJqeXNhOUJMUkNWb3NmWlBlY2wzTmRjcXgxck1SQzQxaXZRNDA9Cg==",
       "endpoints": [
-        "https://github.com/codexu/note-gen/releases/latest/download/latest.json"
-      ]
+        "http://api.upgrade.toolsetlink.com/v1/tauri/upgrade?tauriKey=a0jtz0HUwL66r7gCGvbMKQ&versionName={{current_version}}&appointVersionName=&devModelKey=&devKey=&target={{target}}&arch={{arch}}"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

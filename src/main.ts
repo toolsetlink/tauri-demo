@@ -1,6 +1,8 @@
 // 修正导入方式
 import { app, event } from '@tauri-apps/api';
-import { checkUpdate, downloadUpdate, installUpdate } from '@tauri-apps/plugin-updater';
+import { check } from '@tauri-apps/plugin-updater';
+// import { relaunch } from '@tauri-apps/plugin-process';
+// import { checkUpdate, downloadUpdate, installUpdate } from '@tauri-apps/plugin-updater';
 
 // DOM 元素类型定义
 const currentVersionEl = document.getElementById('current-version') as HTMLSpanElement;
@@ -86,22 +88,19 @@ async function checkForUpdates(): Promise<void> {
 
   try {
 
-    showStatus('应用已是最新版本', 'success');
+    const update = await check({
+      timeout: 30000 /* milliseconds */,
+      headers: {
+        'X-AccessKey': 'mui2W50H1j-OC4xD6PgQag',
+      },
+    });
 
-    // 使用新的导入方式调用更新检查
-    const update = await checkUpdate();
-
-    if (update.status === 'UPTODATE') {
-      showStatus('应用已是最新版本', 'success');
-      updateLogEl.innerHTML = '<p class="italic text-gray-400">暂无更新日志</p>';
-      downloadUpdateBtn.classList.add('hidden');
-      installUpdateBtn.classList.add('hidden');
-    } else if (update.status === 'AVAILABLE') {
-      showStatus(`发现新版本 ${update.manifest?.version}`, 'warning');
+    if (update) {
+      showStatus(`发现新版本 ${update?.version}`, 'warning');
 
       // 显示更新日志
-      if (update.manifest?.body) {
-        updateLogEl.innerHTML = `<pre class="whitespace-pre-wrap">${update.manifest.body}</pre>`;
+      if (update.body) {
+        updateLogEl.innerHTML = `<pre class="whitespace-pre-wrap">${update.body}</pre>`;
       } else {
         updateLogEl.innerHTML = '<p class="text-gray-600">无更新说明</p>';
       }
@@ -109,14 +108,22 @@ async function checkForUpdates(): Promise<void> {
       // 显示下载按钮
       downloadUpdateBtn.classList.remove('hidden');
       installUpdateBtn.classList.add('hidden');
+
     } else {
-      showStatus('更新状态未知', 'error');
-      console.error('未知更新状态:', update.status);
+
+      showStatus('应用已是最新版本', 'success');
+      updateLogEl.innerHTML = '<p class="italic text-gray-400">暂无更新日志</p>';
+      downloadUpdateBtn.classList.add('hidden');
+      installUpdateBtn.classList.add('hidden');
+
     }
+
   } catch (error) {
     showStatus('检查更新失败', 'error');
     console.error('检查更新失败:', error);
   }
+
+
 }
 
 // 下载更新
@@ -124,22 +131,51 @@ async function downloadUpdate(): Promise<void> {
   showStatus('正在下载更新...', 'loading');
   downloadUpdateBtn.classList.add('hidden');
 
+  let downloaded = 0;
+  let contentLength: number | undefined = 0;
+
   try {
-    // 监听下载进度
-    const unlisten = await event.listen('tauri://update-download-progress', (event) => {
-      const { total, completed } = event.payload as { total: number, completed: number };
-      const percentage = Math.round((completed / total) * 100);
-      showStatus(`下载进度: ${percentage}%`, 'loading');
+
+    // 使用新的导入方式调用更新检查
+    const update = await check({
+      timeout: 30000 /* milliseconds */,
+      headers: {
+        'X-AccessKey': 'mui2W50H1j-OC4xD6PgQag',
+      },
     });
 
-    // 使用新的导入方式调用下载更新
-    await downloadUpdate();
 
-    // 停止监听
-    unlisten();
+    console.error('update:', update);
+
+    if (update) {
+
+      // alternatively we could also call update.download() and update.install() separately
+      await update.downloadAndInstall((event) => {
+        switch (event.event) {
+          case 'Started':
+            contentLength = event.data.contentLength;
+            console.log(`started downloading ${event.data.contentLength} bytes`);
+            break;
+          case 'Progress':
+            downloaded += event.data.chunkLength;
+            console.log(`downloaded ${downloaded} from ${contentLength}`);
+
+            const percentage = Math.round((downloaded / 1000) * 100);
+
+            showStatus(`下载进度: ${percentage}%`, 'loading');
+            break;
+          case 'Finished':
+            console.log('download finished');
+            break;
+        }
+      });
+
+    }
+
 
     showStatus('更新下载完成，准备安装', 'success');
     installUpdateBtn.classList.remove('hidden');
+
   } catch (error) {
     showStatus('下载更新失败', 'error');
     console.error('下载更新失败:', error);
