@@ -63,3 +63,22 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      - name: Extract TagName
+        id: extract-tag
+        run: |
+          # 直接提取tauri-action生成的tagName
+          tag_name= tauri-demo-v__VERSION__
+          echo "TAG_NAME=$tag_name" >> $GITHUB_ENV
+            
+
+  call-api:
+    needs:  publish-tauri  # 依赖于 publish-tauri作业完成
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch JSON and Call API
+        uses: toolsetlink/upgradelink-action@v3  # 替换为你的用户名和仓库名
+        with:
+          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/${{ needs.publish-tauri.outputs.TAG_NAME }}/latest.json'  # 替换为实际的JSON数据源URL
+          access-key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}  # 从GitHub Secrets获取
+          tauri-key: ${{ secrets.UPGRADE_LINK_TAURI_KEY }}    # 从GitHub Secrets获取
