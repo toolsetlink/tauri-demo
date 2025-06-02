@@ -64,21 +64,12 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      - name: Extract TagName
-        id: extract-tag
-        shell: ${{ matrix.shell }}
+      - name: Save TagName to artifact
+        if: matrix.platform == 'ubuntu-24.04'  # 只在一个平台上保存标签，避免冲突
         run: |
-          # 从tauri-action的输出获取实际的tagName
-          tag_name="${{ steps.tauri.outputs.tagName }}"
-          
-          # 根据平台使用不同的环境变量设置语法
-          if [ "${{ matrix.platform }}" = "windows-latest" ]; then
-            echo "TAG_NAME=$tag_name" >> "$GITHUB_ENV"
-            echo "tag_name=$tag_name" >> "$GITHUB_OUTPUT"
-          else
-            echo "TAG_NAME=$tag_name" >> $GITHUB_ENV
-            echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
-          fi
+          echo "${{ steps.tauri.outputs.tagName }}" > tag_name.txt
+        shell: bash
+  
 
   call-api:
     needs:  publish-tauri  # 依赖于 publish-tauri作业完成
