@@ -64,11 +64,13 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      - name: Save TagName to artifact
-        if: matrix.platform == 'ubuntu-24.04'  # 只在一个平台上保存标签，避免冲突
+      - name: Save TagName to output
+        id: save_tag
+        if: matrix.platform == 'ubuntu-24.04'
         run: |
-          echo "TAG_NAME=$tag_name" >> "$GITHUB_ENV"
-          echo "tag_name=$tag_name" >> "$GITHUB_OUTPUT"
+          # 从tauri-action获取实际的tagName（根据实际情况调整）
+          tag_name=$(echo "tauri-demo-v$(git describe --tags --abbrev=0)")
+          echo "tag_name=$tag_name" >> $GITHUB_OUTPUT  # 输出名保持小写
         shell: bash
   
 
@@ -79,6 +81,6 @@ jobs:
       - name: Fetch JSON and Call API
         uses: toolsetlink/upgradelink-action@v3  # 替换为你的用户名和仓库名
         with:
-          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/${{ needs.publish-tauri.outputs.TAG_NAME }}/latest.json'  # 替换为实际的JSON数据源URL
+          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/${{ needs.publish-tauri.outputs.tag_name }}/latest.json'  # 替换为实际的JSON数据源URL
           access-key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}  # 从GitHub Secrets获取
           tauri-key: ${{ secrets.UPGRADE_LINK_TAURI_KEY }}    # 从GitHub Secrets获取
