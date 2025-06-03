@@ -7,6 +7,10 @@ on:
 
 jobs:
   publish-tauri:
+    # 添加输出定义
+    outputs:
+      tag_name: ${{ steps.set_output.outputs.tag_name }}
+
     permissions:
       contents: write
     strategy:
@@ -69,17 +73,18 @@ jobs:
         id: save_tag
         if: matrix.platform == 'ubuntu-24.04'
         run: |
-          # 从 tauri-action 的输入参数中获取标签名模板
           tag_template="${{ steps.tauri-action.inputs.tagName }}"
-          
-          # 从环境变量中获取实际版本号（tauri-action 会设置这个）
           version="${{ env.TAURI_VERSION }}"
-          
-          # 替换模板中的 __VERSION__ 为实际版本号
           tag_name="${tag_template/__VERSION__/$version}"
-          
           echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
-        shell: bash
+
+      # 新增步骤：设置作业级输出
+      - name: Set job output
+        id: set_output
+        if: matrix.platform == 'ubuntu-24.04'
+        run: |
+          echo "tag_name=${{ steps.save_tag.outputs.tag_name }}" >> $GITHUB_OUTPUT
+
 
 
   call-api:
@@ -87,8 +92,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch JSON and Call API
-        uses: toolsetlink/upgradelink-action@v3  # 替换为你的用户名和仓库名
+        uses: toolsetlink/upgradelink-action@v4  # 替换为你的用户名和仓库名
         with:
-          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/${{ steps.tauri-action.inputs.tagName }}/latest.json'  # 替换为实际的JSON数据源URL
+          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/${{ needs.publish-tauri.outputs.tag_name }}/latest.json'  # 替换为实际的JSON数据源URL
           access-key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}  # 从GitHub Secrets获取
           tauri-key: ${{ secrets.UPGRADE_LINK_TAURI_KEY }}    # 从GitHub Secrets获取
