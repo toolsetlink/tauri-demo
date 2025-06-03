@@ -1,14 +1,14 @@
 // 修正导入方式
 import { app, event } from '@tauri-apps/api';
 import { check } from '@tauri-apps/plugin-updater';
-// import { relaunch } from '@tauri-apps/plugin-process';
+import { relaunch } from '@tauri-apps/plugin-process';
 // import { checkUpdate, downloadUpdate, installUpdate } from '@tauri-apps/plugin-updater';
 
 // DOM 元素类型定义
 const currentVersionEl = document.getElementById('current-version') as HTMLSpanElement;
 const checkUpdateBtn = document.getElementById('check-update-btn') as HTMLButtonElement;
 const downloadUpdateBtn = document.getElementById('download-update-btn') as HTMLButtonElement;
-const installUpdateBtn = document.getElementById('install-update-btn') as HTMLButtonElement;
+// const installUpdateBtn = document.getElementById('install-update-btn') as HTMLButtonElement;
 const updateStatusEl = document.getElementById('update-status') as HTMLDivElement;
 const updateLogEl = document.getElementById('update-log') as HTMLDivElement;
 
@@ -107,14 +107,14 @@ async function checkForUpdates(): Promise<void> {
 
       // 显示下载按钮
       downloadUpdateBtn.classList.remove('hidden');
-      installUpdateBtn.classList.add('hidden');
+      // installUpdateBtn.classList.add('hidden');
 
     } else {
 
       showStatus('应用已是最新版本', 'success');
       updateLogEl.innerHTML = '<p class="italic text-gray-400">暂无更新日志</p>';
       downloadUpdateBtn.classList.add('hidden');
-      installUpdateBtn.classList.add('hidden');
+      // installUpdateBtn.classList.add('hidden');
 
     }
 
@@ -174,28 +174,33 @@ async function downloadUpdate(): Promise<void> {
 
 
     showStatus('更新下载完成，准备安装', 'success');
-    installUpdateBtn.classList.remove('hidden');
+    // installUpdateBtn.classList.remove('hidden');
 
   } catch (error) {
     showStatus('下载更新失败', 'error');
     console.error('下载更新失败:', error);
     downloadUpdateBtn.classList.remove('hidden');
   }
+
+
+  console.log('update installed');
+  await relaunch();
+
 }
 
 // 安装更新
-async function installUpdate(): Promise<void> {
-  showStatus('正在安装更新...', 'loading');
-  installUpdateBtn.classList.add('hidden');
-
-  try {
-    // 使用新的导入方式调用安装更新
-    await installUpdate();
-  } catch (error) {
-    showStatus('安装更新失败', 'error');
-    console.error('安装更新失败:', error);
-  }
-}
+// async function installUpdate(): Promise<void> {
+//   showStatus('正在安装更新...', 'loading');
+//   installUpdateBtn.classList.add('hidden');
+//
+//   try {
+//     // 使用新的导入方式调用安装更新
+//     await installUpdate();
+//   } catch (error) {
+//     showStatus('安装更新失败', 'error');
+//     console.error('安装更新失败:', error);
+//   }
+// }
 
 // 初始化
 async function init(): Promise<void> {
@@ -204,10 +209,10 @@ async function init(): Promise<void> {
   // 添加事件监听器
   checkUpdateBtn.addEventListener('click', checkForUpdates);
   downloadUpdateBtn.addEventListener('click', downloadUpdate);
-  installUpdateBtn.addEventListener('click', installUpdate);
+  // installUpdateBtn.addEventListener('click', installUpdate);
 
   // 监听更新状态变化
-  event.listen('tauri://update', (event) => {
+  await event.listen('tauri://update', (event) => {
     console.log('更新事件:', event.payload);
     // 可以在这里添加处理更新事件的逻辑
   });
