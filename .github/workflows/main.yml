@@ -9,7 +9,7 @@ jobs:
   publish-tauri:
     # 添加输出定义
     outputs:
-      tag_name: ${{ steps.set_output.outputs.tag_name }}
+      appVersion: ${{ steps.set_output.outputs.appVersion }}
 
     permissions:
       contents: write
@@ -75,54 +75,23 @@ jobs:
         run: |
           
           # 调试输出
-          
           echo ${{ steps.tauri-action.outputs.appVersion }}
-          echo "ccc： ${{ steps.tauri-action.outputs.appVersion }}"
-          
-          echo ${{ steps.tauri-action.outputs.releaseId }}
-          echo ${{ steps.tauri-action.outputs.releaseHtmlUrl }}
-          echo ${{ steps.tauri-action.outputs.releaseUploadUrl }}
-          echo ${{ steps.tauri-action.outputs.artifactPaths }}
-          
-          
-          
-          # 直接从 tauri-action 的输出获取版本号（更可靠）
-          version="${{ steps.tauri-action.outputs.appVersion }}"
-          
-          # 回退方法：如果上面获取不到，尝试从环境变量获取
-          if [ -z "$version" ]; then
-          version="${{ env.TAURI_VERSION }}"
-          fi
-          
-          # 如果仍然获取不到，使用回退值
-          if [ -z "$version" ]; then
-          version="0.0.0"
-          echo "::warning::Unable to determine version, using fallback"
-          fi
-          
-          tag_template="${{ steps.tauri-action.inputs.tagName }}"
-          tag_name="${tag_template/__VERSION__/$version}"
           
           # 输出到步骤级
-          echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
+          echo "appVersion=${{ steps.tauri-action.outputs.appVersion }}" >> $GITHUB_OUTPUT
           
-          # 调试输出
-          echo "Generated tag: $tag_name"
-          echo "Template: $tag_template"
-          echo "Version: $version"
-
       # 设置作业级输出
       - name: Set job output
         id: set_output
         if: matrix.platform == 'ubuntu-24.04'
         run: |
           # 注意：这里引用的是 save_tag 步骤的 tag_name 输出
-          echo "tag_name=${{ steps.save_tag.outputs.tag_name }}" >> $GITHUB_OUTPUT
-          echo "Job output set to: ${{ steps.save_tag.outputs.tag_name }}"
+          echo "appVersion=${{ steps.save_tag.outputs.appVersion }}" >> $GITHUB_OUTPUT
+          echo "Job output set to appVersion : ${{ steps.save_tag.outputs.appVersion }}"
 
       - name: Debug tag name
         run:  |
-          echo "Tag: ${{ steps.save_tag.outputs.tag_name }}"
+          echo "appVersion: ${{ steps.save_tag.outputs.appVersion }}"
 
   call-api:
     needs:  publish-tauri  # 依赖于 publish-tauri作业完成
@@ -130,12 +99,12 @@ jobs:
     steps:
       - name: Debug tag name
         run: |
-          echo "Job output: ${{ needs.publish-tauri.outputs.tag_name }}"
-          echo "All outputs: ${{ toJSON(needs.publish-tauri.outputs) }}"
+          echo ${{ steps.tauri-action.outputs.appVersion }}
+          echo "Debug tag name Job output: ${{ needs.publish-tauri.outputs.appVersion }}"
 
       - name: Fetch JSON and Call API
         uses: toolsetlink/upgradelink-action@v4  # 替换为你的用户名和仓库名
         with:
-          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/${{ needs.publish-tauri.outputs.tag_name }}/latest.json'  # 替换为实际的JSON数据源URL
+          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/${{ needs.publish-tauri.outputs.appVersion }}/latest.json'  # 替换为实际的JSON数据源URL
           access-key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}  # 从GitHub Secrets获取
           tauri-key: ${{ secrets.UPGRADE_LINK_TAURI_KEY }}    # 从GitHub Secrets获取
