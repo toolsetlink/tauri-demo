@@ -179,10 +179,16 @@ async function downloadUpdate(): Promise<void> {
     // installUpdateBtn.classList.remove('hidden');
 
   } catch (error) {
+    // 统一处理所有错误
+    const errorMessage = error instanceof Error ? error.message : String(error);
     showStatus('下载更新失败', 'error');
     console.error('下载更新失败:', error);
 
-    updateLogEl.innerHTML = error instanceof Error ? error.message : '未知错误';
+    // 显示完整的错误信息
+    updateLogEl.innerHTML = `
+      <div class="text-red-500 font-medium">更新失败: ${errorMessage}</div>
+      <div class="text-sm mt-1">请检查网络连接或稍后重试</div>
+    `;
 
     downloadUpdateBtn.classList.remove('hidden');
   }
