@@ -178,6 +178,11 @@ async function downloadUpdate(): Promise<void> {
     showStatus('更新下载完成，准备安装', 'success');
     // installUpdateBtn.classList.remove('hidden');
 
+
+    console.log('update installed');
+    await relaunch();
+
+
   } catch (error) {
     // 统一处理所有错误
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -194,8 +199,7 @@ async function downloadUpdate(): Promise<void> {
   }
 
 
-  console.log('update installed');
-  await relaunch();
+
 
 }
 
