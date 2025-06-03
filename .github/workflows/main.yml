@@ -77,9 +77,10 @@ jobs:
           # 调试输出
           echo tauri-demo-v__VERSION__
           
+          echo "ccc： ${{ steps.tauri-action.outputs.appVersion }}"
           
           # 直接从 tauri-action 的输出获取版本号（更可靠）
-          version="${{ steps.tauri-action.outputs.version }}"
+          version="${{ steps.tauri-action.outputs.appVersion }}"
           
           # 回退方法：如果上面获取不到，尝试从环境变量获取
           if [ -z "$version" ]; then
