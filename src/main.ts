@@ -172,16 +172,13 @@ async function downloadUpdate(): Promise<void> {
         }
       });
 
+      showStatus('更新下载完成，准备安装', 'success');
+      // installUpdateBtn.classList.remove('hidden');
+
+      console.log('update installed');
+      await relaunch();
+
     }
-
-
-    showStatus('更新下载完成，准备安装', 'success');
-    // installUpdateBtn.classList.remove('hidden');
-
-
-    console.log('update installed');
-    await relaunch();
-
 
   } catch (error) {
     // 统一处理所有错误
