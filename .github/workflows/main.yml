@@ -69,34 +69,56 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      - name: Save TagName to output
+      - name: Generate release tag
         id: save_tag
         if: matrix.platform == 'ubuntu-24.04'
         run: |
-          tag_template="${{ steps.tauri-action.inputs.tagName }}"
+          # 直接从 tauri-action 的输出获取版本号（更可靠）
+          version="${{ steps.tauri-action.outputs.version }}"
+          
+          # 回退方法：如果上面获取不到，尝试从环境变量获取
+          if [ -z "$version" ]; then
           version="${{ env.TAURI_VERSION }}"
+          fi
+          
+          # 如果仍然获取不到，使用回退值
+          if [ -z "$version" ]; then
+          version="0.0.0"
+          echo "::warning::Unable to determine version, using fallback"
+          fi
+          
+          tag_template="${{ steps.tauri-action.inputs.tagName }}"
           tag_name="${tag_template/__VERSION__/$version}"
+          
+          # 输出到步骤级
           echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
+          
+          # 调试输出
+          echo "Generated tag: $tag_name"
+          echo "Template: $tag_template"
+          echo "Version: $version"
 
-      # 新增步骤：设置作业级输出
+      # 设置作业级输出
       - name: Set job output
         id: set_output
         if: matrix.platform == 'ubuntu-24.04'
         run: |
+          # 注意：这里引用的是 save_tag 步骤的 tag_name 输出
           echo "tag_name=${{ steps.save_tag.outputs.tag_name }}" >> $GITHUB_OUTPUT
+          echo "Job output set to: ${{ steps.save_tag.outputs.tag_name }}"
 
       - name: Debug tag name
-        run: |
+        run:  |
           echo "Tag: ${{ steps.save_tag.outputs.tag_name }}"
-
 
   call-api:
     needs:  publish-tauri  # 依赖于 publish-tauri作业完成
     runs-on: ubuntu-latest
     steps:
       - name: Debug tag name
-        run:  |
-          echo "Tag: ${{ needs.publish-tauri.outputs.tag_name }}"
+        run: |
+          echo "Job output: ${{ needs.publish-tauri.outputs.tag_name }}"
+          echo "All outputs: ${{ toJSON(needs.publish-tauri.outputs) }}"
 
       - name: Fetch JSON and Call API
         uses: toolsetlink/upgradelink-action@v4  # 替换为你的用户名和仓库名
