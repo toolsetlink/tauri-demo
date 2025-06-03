@@ -122,69 +122,9 @@ async function checkForUpdates(): Promise<void> {
     showStatus('检查更新失败', 'error');
     console.error('检查更新失败:', error);
 
-    // 显示错误详情弹窗
-    const errorMessage = error instanceof Error
-        ? error.message
-        : '未知错误，请稍后重试';
-
-    showErrorDialog('更新检查失败', `检查更新过程中发生错误: ${errorMessage}`);
-
   }
 
 }
-
-
-// 显示错误对话框
-function showErrorDialog(title: string, message: string) {
-
-  // 创建遮罩层
-  const overlay = document.createElement('div');
-  overlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-
-  // 创建对话框
-  const dialog = document.createElement('div');
-  dialog.className = 'bg-white rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden transform transition-all';
-
-  // 对话框标题
-  const dialogTitle = document.createElement('div');
-  dialogTitle.className = 'bg-red-600 text-white px-6 py-3 font-medium';
-  dialogTitle.textContent = title;
-
-  // 对话框内容
-  const dialogContent = document.createElement('div');
-  dialogContent.className = 'px-6 py-4';
-  dialogContent.innerHTML = `<p class="text-gray-800">${message}</p>`;
-
-  // 对话框底部按钮
-  const dialogFooter = document.createElement('div');
-  dialogFooter.className = 'px-6 py-3 bg-gray-50 flex justify-end';
-
-  // 确认按钮
-  const confirmBtn = document.createElement('button');
-  confirmBtn.className = 'px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors';
-  confirmBtn.textContent = '确定';
-  confirmBtn.onclick = () => {
-    document.body.removeChild(overlay);
-  };
-
-  // 组装对话框
-  dialogFooter.appendChild(confirmBtn);
-  dialog.appendChild(dialogTitle);
-  dialog.appendChild(dialogContent);
-  dialog.appendChild(dialogFooter);
-  overlay.appendChild(dialog);
-
-  // 添加到文档
-  document.body.appendChild(overlay);
-
-  // 点击遮罩层外部关闭对话框
-  overlay.onclick = (e) => {
-    if (e.target === overlay) {
-      document.body.removeChild(overlay);
-    }
-  };
-}
-
 
 
 
@@ -241,6 +181,9 @@ async function downloadUpdate(): Promise<void> {
   } catch (error) {
     showStatus('下载更新失败', 'error');
     console.error('下载更新失败:', error);
+
+    updateLogEl.innerHTML = error instanceof Error ? error.message : '未知错误';
+
     downloadUpdateBtn.classList.remove('hidden');
   }
 
@@ -249,20 +192,6 @@ async function downloadUpdate(): Promise<void> {
   await relaunch();
 
 }
-
-// 安装更新
-// async function installUpdate(): Promise<void> {
-//   showStatus('正在安装更新...', 'loading');
-//   installUpdateBtn.classList.add('hidden');
-//
-//   try {
-//     // 使用新的导入方式调用安装更新
-//     await installUpdate();
-//   } catch (error) {
-//     showStatus('安装更新失败', 'error');
-//     console.error('安装更新失败:', error);
-//   }
-// }
 
 // 初始化
 async function init(): Promise<void> {
