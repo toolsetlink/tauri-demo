@@ -75,9 +75,16 @@ jobs:
         run: |
           
           # 调试输出
-          echo tauri-demo-v__VERSION__
           
+          echo ${{ steps.tauri-action.outputs.appVersion }}
           echo "ccc： ${{ steps.tauri-action.outputs.appVersion }}"
+          
+          echo ${{ steps.tauri-action.outputs.releaseId }}
+          echo ${{ steps.tauri-action.outputs.releaseHtmlUrl }}
+          echo ${{ steps.tauri-action.outputs.releaseUploadUrl }}
+          echo ${{ steps.tauri-action.outputs.artifactPaths }}
+          
+          
           
           # 直接从 tauri-action 的输出获取版本号（更可靠）
           version="${{ steps.tauri-action.outputs.appVersion }}"
