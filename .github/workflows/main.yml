@@ -73,6 +73,13 @@ jobs:
         id: save_tag
         if: matrix.platform == 'ubuntu-24.04'
         run: |
+          
+          # 调试输出
+          echo tauri-demo-v__VERSION__
+          echo "Generated 1111 tag: ${{ tauri-demo-v__VERSION__ }}"
+          echo "Generated 1111 tag: tauri-demo-v__VERSION__"
+          
+          
           # 直接从 tauri-action 的输出获取版本号（更可靠）
           version="${{ steps.tauri-action.outputs.version }}"
           
