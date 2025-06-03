@@ -86,13 +86,13 @@ jobs:
           # 注意：这里引用的是 save_tag 步骤的 tag_name 输出
           echo "appVersion=${{ steps.save_tag.outputs.appVersion }}" >> $GITHUB_OUTPUT
 
-  call-api:
+  upgradeLink-upload:
     needs:  publish-tauri  # 依赖于 publish-tauri作业完成
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch JSON and Call API
-        uses: toolsetlink/upgradelink-action@v4  # 替换为你的用户名和仓库名
+      - name: Send a request to UpgradeLink
+        uses: toolsetlink/upgradelink-action@v4
         with:
-          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/tauri-demo-v${{ needs.publish-tauri.outputs.appVersion }}/latest.json'  # 替换为实际的JSON数据源URL
-          access-key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}  # 从GitHub Secrets获取
-          tauri-key: ${{ secrets.UPGRADE_LINK_TAURI_KEY }}    # 从GitHub Secrets获取
+          source-url: 'https://github.com/toolsetlink/tauri-demo/releases/download/tauri-demo-v${{ needs.publish-tauri.outputs.appVersion }}/latest.json'
+          access-key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}  # ACCESS_KEY  密钥key
+          tauri-key: ${{ secrets.UPGRADE_LINK_TAURI_KEY }}    # TAURI_KEY tauri 应用唯一标识
