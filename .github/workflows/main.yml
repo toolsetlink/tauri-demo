@@ -67,6 +67,7 @@ jobs:
 
       - name: Save TagName to output
         id: save_tag
+        if: matrix.platform == 'ubuntu-24.04'
         run: |
           # 从 tauri-action 的输入参数中获取标签名模板
           tag_template="${{ steps.tauri-action.inputs.tagName }}"
@@ -79,8 +80,7 @@ jobs:
           
           echo "tag_name=$tag_name" >> $GITHUB_OUTPUT
         shell: bash
-        if: always() && steps.tauri-action.conclusion == 'success'  # 仅在 tauri-action 成功时运行
-  
+
 
   call-api:
     needs:  publish-tauri  # 依赖于 publish-tauri作业完成
