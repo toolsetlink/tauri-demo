@@ -85,12 +85,19 @@ jobs:
         run: |
           echo "tag_name=${{ steps.save_tag.outputs.tag_name }}" >> $GITHUB_OUTPUT
 
+      - name: Debug tag name
+        run: |
+          echo "Tag: ${{ steps.save_tag.outputs.tag_name }}"
 
 
   call-api:
     needs:  publish-tauri  # 依赖于 publish-tauri作业完成
     runs-on: ubuntu-latest
     steps:
+      - name: Debug tag name
+        run:  |
+          echo "Tag: ${{ needs.publish-tauri.outputs.tag_name }}"
+
       - name: Fetch JSON and Call API
         uses: toolsetlink/upgradelink-action@v4  # 替换为你的用户名和仓库名
         with:
