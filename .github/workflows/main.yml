@@ -75,7 +75,7 @@ jobs:
         run: |
           
           # 调试输出
-          echo "Generated 1111 tag: tauri-demo-v__VERSION__"
+          echo tauri-demo-v__VERSION__
           
           
           # 直接从 tauri-action 的输出获取版本号（更可靠）
