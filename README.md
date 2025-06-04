@@ -1,9 +1,13 @@
-# Tauri + Vanilla TS
+# Tauri + Action
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Typescript.
+此项目为 用来展示 tauri 项目的升级模块 + UpgradeLink 的示例项目
 
-## Recommended IDE Setup
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+[UpgradeLink](http://upgrade.toolsetlink.com/)  全端支持，一站式应用升级分发平台及解决方案。
 
-113
+
+ <img src="./img.png" width = "500" height = "500" alt="图片名称" />
+
+----
+
+ <img src="./img_1.png" width = "500" height = "550" alt="图片名称" />

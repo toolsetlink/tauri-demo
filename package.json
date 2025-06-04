@@ -1,7 +1,7 @@
 {
   "name": "tauri-demo",
   "private": true,
-  "version": "0.1.21",
+  "version": "0.1.22",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,9 @@
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
     "@tauri-apps/plugin-process": "^2.2.1",
-    "@tauri-apps/plugin-updater": "^2.7.1"
+    "@tauri-apps/plugin-updater": "^2.7.1",
+    "font-awesome": "^4.7.0",
+    "tailwindcss": "^4.1.8"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
