@@ -89,7 +89,7 @@ jobs:
   upgradeLink-upload:
     needs:  publish-tauri  # 依赖于 publish-tauri作业完成
     permissions:
-      contents: write  # 确保这个作业也有写入权限
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Send a request to UpgradeLink
