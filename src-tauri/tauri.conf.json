@@ -43,7 +43,7 @@
       "dangerousInsecureTransportProtocol": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDY4QjBGNEM4NjUyMUNGRjAKUldUd3p5Rmx5UFN3YUN1UkFMK05DdWR4VjA1eDRybkxJNzMreURNbHZ4VFhtSk54UTVMWVg4NnAK",
       "endpoints": [
-        "http://api.upgrade.toolsetlink.com/v1/tauri/upgrade?tauriKey=a0jtz0HUwL66r7gCGvbMKQ&versionName={{current_version}}&appointVersionName=&devModelKey=&devKey=&target={{target}}&arch={{arch}}"
+        "https://api.upgrade.toolsetlink.com/v1/tauri/upgrade?tauriKey=a0jtz0HUwL66r7gCGvbMKQ&versionName={{current_version}}&appointVersionName=&devModelKey=&devKey=&target={{target}}&arch={{arch}}"
       ],
       "windows": {
         "installMode": "passive"
