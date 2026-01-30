@@ -85,8 +85,8 @@ jobs:
         - name: Send a request to UpgradeLink
           uses: toolsetlink/upgradelink-action@3.0.0
           with:
-  #          protocol: 'HTTPS'
-  #          endpoint: 'custom-api.example.com'
+            protocol: 'HTTPS'
+            endpoint: 'api.upgrade.toolsetlink.com'
             access_key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}
             access_secret: ${{ secrets.UPGRADE_LINK_ACCESS_SECRET }}
             config: |
