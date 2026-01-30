@@ -86,14 +86,13 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Send a request to UpgradeLink
-          uses: toolsetlink/upgradelink-action@3.0.1
+          uses: toolsetlink/upgradelink-action@3.0.2
           with:
-#            protocol: 'HTTPS'
-#            endpoint: 'api.upgrade.toolsetlink.com'
             access_key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}
             access_secret: ${{ secrets.UPGRADE_LINK_ACCESS_SECRET }}
             config: |
               {
+                "app_type": "tauri",
                 "request": {
                   "app_key": "${{ secrets.UPGRADE_LINK_TAURI_KEY }}",
                   "latest_json_url": "https://github.com/toolsetlink/tauri-demo/releases/download/tauri-demo-v${{ needs.publish-tauri.outputs.appVersion }}/latest.json"
