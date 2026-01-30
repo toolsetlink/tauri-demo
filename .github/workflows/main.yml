@@ -9,6 +9,8 @@ jobs:
   publish-tauri:
     permissions:
       contents: write
+    outputs:
+      appVersion: ${{ steps.set-job-output.outputs.appVersion }}
     strategy:
       fail-fast: false
       matrix:
@@ -71,6 +73,7 @@ jobs:
 
       # 替换当前的 Generate release tag 和 Set job output 步骤
       - name: Set job output
+        id: set-job-output
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           echo "appVersion=${{ steps.tauri-action.outputs.appVersion }}" >> $GITHUB_OUTPUT
