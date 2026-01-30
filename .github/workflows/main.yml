@@ -83,10 +83,10 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Send a request to UpgradeLink
-          uses: toolsetlink/upgradelink-action@3.0.0
+          uses: toolsetlink/upgradelink-action@3.0.1
           with:
-            protocol: 'HTTPS'
-            endpoint: 'api.upgrade.toolsetlink.com'
+#            protocol: 'HTTPS'
+#            endpoint: 'api.upgrade.toolsetlink.com'
             access_key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}
             access_secret: ${{ secrets.UPGRADE_LINK_ACCESS_SECRET }}
             config: |
