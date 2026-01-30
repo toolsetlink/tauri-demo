@@ -32,7 +32,7 @@ jobs:
         if: startsWith(matrix.platform, 'ubuntu-') # This must match the platform value defined above.
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xdg-utils
 
       - name: setup node
         uses: actions/setup-node@v4
@@ -68,3 +68,31 @@ jobs:
           releaseDraft: false # 不创建草稿版本
           prerelease: false # 不作为预发布版本
           args: ${{ matrix.args }}
+
+      # 替换当前的 Generate release tag 和 Set job output 步骤
+      - name: Set job output
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          echo "appVersion=${{ steps.tauri-action.outputs.appVersion }}" >> $GITHUB_OUTPUT
+          
+
+  upgradeLink-upload:
+      needs:  publish-tauri  # 依赖于 publish-tauri作业完成
+      permissions:
+        contents: write
+      runs-on: ubuntu-latest
+      steps:
+        - name: Send a request to UpgradeLink
+          uses: toolsetlink/upgradelink-action@3.0.0
+          with:
+  #          protocol: 'HTTPS'
+  #          endpoint: 'custom-api.example.com'
+            access_key: ${{ secrets.UPGRADE_LINK_ACCESS_KEY }}
+            access_secret: ${{ secrets.UPGRADE_LINK_ACCESS_SECRET }}
+            config: |
+              {
+                "request": {
+                  "app_key": "${{ secrets.UPGRADE_LINK_TAURI_KEY }}",
+                  "latest_json_url": "https://github.com/toolsetlink/tauri-demo/releases/download/tauri-demo-v${{ needs.publish-tauri.outputs.appVersion }}/latest.json"
+                }
+              }
