@@ -55,7 +55,7 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install
 
-      - uses: tauri-apps/tauri-action@v0.5.23
+      - uses: tauri-apps/tauri-action@v0
         id: tauri-action  # 添加 id 以便后续引用
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
